@@ -22,6 +22,7 @@
         <module>modules/siddhi-extensions</module>
         <module>modules/siddhi-distribution</module>
         <module>modules/siddhi-samples</module>
+        <module>modules/siddhi-wrapper</module>
     </modules>
 
     <distributionManagement>

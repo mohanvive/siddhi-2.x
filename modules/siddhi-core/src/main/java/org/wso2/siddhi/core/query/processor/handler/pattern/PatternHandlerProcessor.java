@@ -20,6 +20,7 @@ package org.wso2.siddhi.core.query.processor.handler.pattern;
 import org.apache.log4j.Logger;
 import org.wso2.siddhi.core.config.SiddhiContext;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.snapshot.ThreadBarrier;
 import org.wso2.siddhi.core.query.QueryPostProcessingElement;
 import org.wso2.siddhi.core.util.collection.queue.scheduler.SchedulerElement;
@@ -33,7 +34,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 public class PatternHandlerProcessor
         implements HandlerProcessor, Runnable, MarkedElement,
-                   SchedulerElement {
+                   SchedulerElement,Cloneable {
 
     static final Logger log = Logger.getLogger(PatternHandlerProcessor.class);
 
@@ -141,5 +142,15 @@ public class PatternHandlerProcessor
 
     public List<PatternInnerHandlerProcessor> getPatternInnerHandlerProcessorList() {
         return patternInnerHandlerProcessorList;
+    }
+
+    public PatternHandlerProcessor cloneObject(){
+        try {
+            return (PatternHandlerProcessor) super.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return null;
     }
 }

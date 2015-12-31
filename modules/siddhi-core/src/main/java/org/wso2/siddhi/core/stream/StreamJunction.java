@@ -19,7 +19,9 @@ package org.wso2.siddhi.core.stream;
 
 import org.wso2.siddhi.core.event.StreamEvent;
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.pattern.PatternHandlerProcessorGroup;
 import org.wso2.siddhi.core.tracer.EventMonitorService;
+import org.wso2.siddhi.core.util.EventPrinter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -35,6 +37,9 @@ public class StreamJunction {
     }
 
     public void send(StreamEvent allEvents) {
+
+        EventPrinter.print(allEvents.toArray());
+
         if (eventMonitorService.isEnableTrace()) {
             eventMonitorService.trace(allEvents, " on Event Stream");
         }
@@ -42,7 +47,11 @@ public class StreamJunction {
             eventMonitorService.calculateStats(allEvents);
         }
         for (StreamReceiver handlerProcessor : streamReceivers) {
-            handlerProcessor.receive(allEvents);
+            if (handlerProcessor instanceof PatternHandlerProcessorGroup) {
+                ((PatternHandlerProcessorGroup) handlerProcessor).receive(streamId, allEvents);
+            } else {
+                handlerProcessor.receive(allEvents);
+            }
         }
     }
 

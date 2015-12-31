@@ -28,6 +28,8 @@ import org.wso2.siddhi.core.query.output.ratelimit.snapshot.WrappedSnapshotOutpu
 import org.wso2.siddhi.core.query.processor.handler.HandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.TableHandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.pattern.PatternHandlerProcessor;
+import org.wso2.siddhi.core.query.processor.handler.pattern.PatternHandlerProcessorGroup;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.table.EventTable;
@@ -89,16 +91,21 @@ public class QueryManager {
             for (int i = 0; i < handlerProcessorList.size(); i++) {
                 HandlerProcessor queryStreamProcessor = handlerProcessorList.get(i);
                 if ((!(queryStreamProcessor instanceof TableHandlerProcessor))) {
-                    handlerProcessors.add(new PartitionHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i,partitionExecutors.get(i)));
+                    handlerProcessors.add(new PartitionHandlerProcessor(queryStreamProcessor.getStreamId(), queryPartitioner, i, partitionExecutors.get(i)));
                 }
             }
         }
 
+        PatternHandlerProcessorGroup patternHandlerProcessorGroup = new PatternHandlerProcessorGroup();
         for (HandlerProcessor handlerProcessor : handlerProcessors) {
-            if (!(handlerProcessor instanceof TableHandlerProcessor)) {
+            if (handlerProcessor instanceof PatternHandlerProcessor) {
+                streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(patternHandlerProcessorGroup);
+                patternHandlerProcessorGroup.addPatternHandlerProcessor((PatternHandlerProcessor) handlerProcessor);
+            } else if (!(handlerProcessor instanceof TableHandlerProcessor)) {
                 streamJunctionMap.get(handlerProcessor.getStreamId()).addEventFlow(handlerProcessor);
             }
         }
+        patternHandlerProcessorGroup.setQueryPartition(queryPartitioner);
     }
 
     public String getQueryId() {
@@ -154,6 +161,6 @@ public class QueryManager {
     }
 
     public void addCallback(QueryCallback callback) {
-            outputRateManager.addQueryCallback(callback);
+        outputRateManager.addQueryCallback(callback);
     }
 }
