@@ -38,7 +38,7 @@ public class StreamJunction {
 
     public void send(StreamEvent allEvents) {
 
-        EventPrinter.print(allEvents.toArray());
+        //EventPrinter.print(allEvents.toArray());
 
         if (eventMonitorService.isEnableTrace()) {
             eventMonitorService.trace(allEvents, " on Event Stream");
