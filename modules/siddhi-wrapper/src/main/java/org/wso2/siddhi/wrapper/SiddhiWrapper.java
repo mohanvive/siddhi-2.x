@@ -22,28 +22,32 @@ import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.event.in.InEvent;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
+import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.collection.queue.SiddhiQueue;
-import org.wso2.siddhi.wrapper.util.SiddhiEvent;
 import org.wso2.siddhi.wrapper.util.SiddhiEventConsumer;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 public class SiddhiWrapper {
 
-    private SiddhiManager siddhiManager;
     private String[] streamDefinitionArray;
     private String siddhiQuery;
     private SiddhiConfiguration siddhiConfiguration;
     private Map<String, SiddhiManager> dynamicSiddhiManagerImpl = new LinkedHashMap<String, SiddhiManager>();
     private List<SiddhiEventConsumer> siddhiEventConsumerList = new ArrayList<SiddhiEventConsumer>();
     private Logger log = Logger.getLogger(SiddhiWrapper.class);
-    private SiddhiQueue<SiddhiQueue<InEvent>> siddhiEventQueueGroup = new SiddhiQueue<SiddhiQueue<InEvent>>();
+    public SiddhiQueue<SiddhiQueue<InEvent>> siddhiEventQueueGroup = new SiddhiQueue<SiddhiQueue<InEvent>>();
     private SiddhiQueue<InEvent> currentProcessedEventQueue = new SiddhiQueue<InEvent>();
     private long lastEventTimeStamp;
-    private long withinTimeInterval = 1000;
+    private long withinTimeInterval = 10000;
     private Timer timer;
     ScheduledTask st;
+    int totalQueues = 0;
+    AtomicLong count = new AtomicLong(0);
+    long start = 0;
+    int siddhiMangerCount = 0;
 
     public void createExecutionPlan(String[] streamDefinitionArray, String siddhiQuery, SiddhiConfiguration siddhiConfiguration) {
 
@@ -59,6 +63,7 @@ public class SiddhiWrapper {
 
 
     public void spinSiddhiManagerInstance() {
+        SiddhiManager siddhiManager;
 
         if (siddhiConfiguration != null) {
             siddhiManager = new SiddhiManager(siddhiConfiguration);
@@ -70,14 +75,20 @@ public class SiddhiWrapper {
             siddhiManager.defineStream(streamDefinition);
         }
 
+        //It is only a temporary hack.
+        AddQueries.addPlayerStreams(siddhiManager);
+        AddQueries.addBallStream(siddhiManager);
+        AddQueries.addHitStream(siddhiManager);
+
         String queryReference = siddhiManager.addQuery(siddhiQuery);
         dynamicSiddhiManagerImpl.put(queryReference, siddhiManager);
         (new Thread(new EventConsumer(siddhiManager, queryReference))).start();
-        (new Thread(new EventPublisher(siddhiManager))).start();
+        Thread eventPublisher = new Thread(new EventPublisher(siddhiManager));
+        eventPublisher.setPriority(Thread.MAX_PRIORITY);
+        eventPublisher.start();
     }
 
     public void shutdown() {
-        siddhiManager.shutdown();
         for (SiddhiManager siddhiManager : dynamicSiddhiManagerImpl.values()) {
             siddhiManager.shutdown();
         }
@@ -89,28 +100,26 @@ public class SiddhiWrapper {
             long currentTimeInMillis = System.currentTimeMillis();
             lastEventTimeStamp = currentTimeInMillis + withinTimeInterval;
             currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
-            System.out.println("entered*****");
-            timer = new Timer();
-            st = new ScheduledTask();
-            timer.schedule(st, withinTimeInterval);
+//            timer = new Timer();
+//            st = new ScheduledTask();
+//            timer.schedule(st, withinTimeInterval);
 
 
         } else if (System.currentTimeMillis() > lastEventTimeStamp) {
-            System.out.println("cancelled");
-            timer.cancel();
+            //timer.cancel();
             siddhiEventQueueGroup.put(currentProcessedEventQueue);
             currentProcessedEventQueue = new SiddhiQueue<InEvent>();
             long currentTimeInMillis = System.currentTimeMillis();
             currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
-            if (currentProcessedEventQueue.size() > 2) {
+            totalQueues++;
+            if ((totalQueues % 3) == 0 && (siddhiMangerCount < 15)) {
+                System.out.println("spin in main " + siddhiEventQueueGroup.size());
                 spinSiddhiManagerInstance();
-                System.out.println("spin");
+                siddhiMangerCount++;
             }
-            System.out.println("entered & removed 1*****");
         } else {
             long currentTimeInMillis = System.currentTimeMillis();
             currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
-            System.out.println("entered*****");
         }
 
     }
@@ -143,9 +152,11 @@ public class SiddhiWrapper {
     class EventPublisher implements Runnable {
 
         SiddhiManager siddhiManager;
+        InputHandler inputHandler;
 
-        EventPublisher(SiddhiManager siddhiManager){
+        EventPublisher(SiddhiManager siddhiManager) {
             this.siddhiManager = siddhiManager;
+            inputHandler = siddhiManager.getInputHandler("sensorStream");
         }
 
         @Override
@@ -155,14 +166,24 @@ public class SiddhiWrapper {
                 if (siddhiQueue != null) {
                     while (siddhiQueue.size() > 0) {
                         InEvent siddhiEvent = siddhiQueue.poll();
-                        if (siddhiEvent != null) {
-                            try {
-                                System.out.println("POLLED");
-                                siddhiManager.getInputHandler(siddhiEvent.getStreamId()).send(siddhiEvent);
-                            } catch (InterruptedException e) {
-                                log.error("Error while sending events", e);
+                        try {
+
+                            inputHandler.send(siddhiEvent);
+                            long countValue = count.incrementAndGet();
+
+                            if (countValue == 1) {
+                                start = System.currentTimeMillis();
                             }
+
+                            if (countValue % 1000000 == 0) {
+                                float percentageCompleted = (countValue / 49576080);
+                                System.out.println("********** Events Completed : " + count + " Throughput : " + (countValue * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
+                            }
+
+                        } catch (Exception e) {
+                            log.error("Error while sending events", e);
                         }
+
                     }
                 }
             }
@@ -172,15 +193,16 @@ public class SiddhiWrapper {
     class ScheduledTask extends TimerTask {
 
         public void run() {
-            System.out.println("Called" + System.currentTimeMillis());
             if (currentProcessedEventQueue.size() > 0) {
                 siddhiEventQueueGroup.put(currentProcessedEventQueue);
                 currentProcessedEventQueue = new SiddhiQueue<InEvent>();
-                if (currentProcessedEventQueue.size() > 2) {
+                totalQueues++;
+                if ((totalQueues % 3) == 0 && (siddhiMangerCount < 20)) {
+                    //System.out.println("spin in schedule " + siddhiEventQueueGroup.size());
                     spinSiddhiManagerInstance();
-                    System.out.println("spin");
+                    siddhiMangerCount++;
                 }
-                System.out.println("entered & removed 2*****");
+                //System.out.println("entered & removed 2*****");
             }
 
             timer.cancel();

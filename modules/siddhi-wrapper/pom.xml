@@ -79,7 +79,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.wso2.siddhi.wrapper.Usecase1Runner</mainClass>
+                            <mainClass>org.wso2.siddhi.wrapper.Usecase2Runner</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

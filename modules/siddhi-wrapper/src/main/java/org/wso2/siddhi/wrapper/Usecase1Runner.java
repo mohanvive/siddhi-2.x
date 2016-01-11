@@ -41,7 +41,7 @@ public class Usecase1Runner {
         siddhiManager.addCallback(queryReference, new QueryCallback() {
             @Override
             public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                //EventPrinter.print(timeStamp, inEvents, removeEvents);
+                EventPrinter.print(timeStamp, inEvents, removeEvents);
             }
         });
 
