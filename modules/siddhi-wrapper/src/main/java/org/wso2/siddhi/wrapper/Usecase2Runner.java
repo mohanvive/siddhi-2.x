@@ -47,6 +47,8 @@ public class Usecase2Runner {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
             System.out.println(e);
+        } catch (Exception e){
+            System.out.println(e);
         }
 
         siddhiWrapper.shutdown();
@@ -94,11 +96,13 @@ public class Usecase2Runner {
 
             long currentTime = System.currentTimeMillis();
             System.out.println("Processing took " + (currentTime - start) + " ms and throughput = " + (1000 * count / ((currentTime - start))));
+            System.out.println("***** Processing took " + (currentTime - siddhiWrapper.start) + " ms and throughput = " + (1000 * siddhiWrapper.count.get() / ((currentTime - siddhiWrapper.start))));
+
         } catch (Exception e) {
             System.out.println(e);
         }
 
-        System.out.println("Queue size " + siddhiWrapper.siddhiEventQueueGroup.size());
+        System.out.println("Queue size " + siddhiWrapper.siddhiBlockingQueueGroup.size());
     }
 
 
