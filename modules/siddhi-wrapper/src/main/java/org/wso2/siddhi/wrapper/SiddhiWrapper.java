@@ -41,13 +41,13 @@ public class SiddhiWrapper {
     private SiddhiConfiguration siddhiConfiguration;
     private Map<String, SiddhiManager> dynamicSiddhiManagerImpl = new LinkedHashMap<String, SiddhiManager>();
     private List<SiddhiEventConsumer> siddhiEventConsumerList = new ArrayList<SiddhiEventConsumer>();
-    public SiddhiBlockingQueue<SiddhiQueue<InEvent>> siddhiBlockingQueueGroup = new SiddhiBlockingQueue<SiddhiQueue<InEvent>>(60);
+    public SiddhiBlockingQueue<SiddhiQueue<InEvent>> siddhiBlockingQueueGroup = new SiddhiBlockingQueue<SiddhiQueue<InEvent>>(600);
     private SiddhiQueue<InEvent> currentProcessedEventQueue = new SiddhiQueue<InEvent>();
     private Logger log = Logger.getLogger(SiddhiWrapper.class);
     private long lastEventTimeStamp;
     private long withinTimeInterval = 10000;
     private AtomicInteger runningSiddhiManagerCount = new AtomicInteger(0);
-    private int maxSiddhiManagerCount = 5;
+    private int maxSiddhiManagerCount = 2;
     private int siddhiManagerCount = 0;
     private SiddhiWrapper siddhiWrapper;
     AtomicLong count = new AtomicLong(0);
@@ -58,11 +58,13 @@ public class SiddhiWrapper {
     //    ScheduledTask st;
 
 
-    public void createExecutionPlan(String[] streamDefinitionArray, String siddhiQuery, SiddhiConfiguration siddhiConfiguration) {
+    public void createExecutionPlan(String[] streamDefinitionArray, String siddhiQuery, SiddhiConfiguration siddhiConfiguration, int maxSiddhiManagerCount) {
 
         this.streamDefinitionArray = streamDefinitionArray;
         this.siddhiQuery = siddhiQuery;
         this.siddhiConfiguration = siddhiConfiguration;
+        this.maxSiddhiManagerCount = maxSiddhiManagerCount;
+        siddhiManagerCount++;
         spinSiddhiManagerInstance();
     }
 

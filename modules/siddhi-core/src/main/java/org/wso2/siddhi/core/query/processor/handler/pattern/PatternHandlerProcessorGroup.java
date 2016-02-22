@@ -23,7 +23,7 @@ public class PatternHandlerProcessorGroup implements HandlerProcessor {
 
         //siddhiEventMap.get(streamID).put(streamEvent);
 
-        System.out.println("Inner Receive");
+        //System.out.println("Inner Receive");
         for (PatternHandlerProcessor patternHandlerProcessor : patternHandlerProcessorList) {
             if (patternHandlerProcessor.getStreamId().equals(streamID)) {
                 patternHandlerProcessor.receive(streamEvent);

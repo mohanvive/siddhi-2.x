@@ -17,6 +17,8 @@ public class Usecase2Runner {
 
     public static void main(String[] args) {
 
+        int siddhiCount = Integer.parseInt(args[0]);
+
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
         siddhiExtensions.add(NearCheckExecuter.class);
@@ -32,7 +34,7 @@ public class Usecase2Runner {
 
 
         SiddhiWrapper siddhiWrapper = new SiddhiWrapper();
-        siddhiWrapper.createExecutionPlan(streamDef, patternQuery, siddhiConfiguration);
+        siddhiWrapper.createExecutionPlan(streamDef, patternQuery, siddhiConfiguration, siddhiCount);
         siddhiWrapper.registerCallback(new SiddhiEventConsumer() {
             @Override
             public void receiveEvents(long timeStamp, Event[] inEvents, Event[] removeEvents) {

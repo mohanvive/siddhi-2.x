@@ -120,7 +120,7 @@ public class PatternInnerHandlerProcessor
     @Override
     public void process(StreamEvent event) {
 
-        System.out.println("Process Method");
+        //System.out.println("Process Method");
         try {
             LogHelper.logMethod(log, event);
 
@@ -136,7 +136,7 @@ public class PatternInnerHandlerProcessor
                     currentEvent.setStreamEvent(currentState, event);
                     StateEvent newEvent = (StateEvent) filterProcessor.process(currentEvent);
                     if (newEvent != null) {
-                        System.out.println("Process success Event Call");
+                        //System.out.println("Process success Event Call");
                         processSuccessEvent(newEvent);
                     } else {
                         currentEvent.setStreamEvent(currentState, null);

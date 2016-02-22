@@ -57,7 +57,7 @@ public class PatternTestCase {
                 "select e1.symbol as symbol1, e2.symbol as symbol2 " +
                 "insert into OutputStream ;";
 
-        siddhiWrapper.createExecutionPlan(streamDefinitions, query, null);
+        siddhiWrapper.createExecutionPlan(streamDefinitions, query, null, 2);
         siddhiWrapper.registerCallback(new SiddhiEventConsumer() {
             @Override
             public void receiveEvents(long timeStamp, Event[] inEvents, Event[] removeEvents) {
