@@ -17,6 +17,8 @@
 */
 package org.wso2.siddhi.core.event;
 
+import org.wso2.siddhi.core.event.in.InEvent;
+
 import java.util.Arrays;
 
 /**
@@ -67,7 +69,7 @@ public abstract class StateEvent implements ComplexEvent, AtomicEvent {
         for (int i = 0; i < streamEvents.length; i++) {
             StreamEvent streamEvent = streamEvents[i];
             if (streamEvent != null) {
-                return streamEvent.getTimeStamp();
+                return Long.parseLong(((InEvent) streamEvent).getData()[1].toString());
             }
         }
         return 0;
