@@ -23,6 +23,7 @@ import org.wso2.siddhi.core.event.AtomicEvent;
 import org.wso2.siddhi.core.event.ComplexEvent;
 import org.wso2.siddhi.core.event.StateEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.in.InEvent;
 import org.wso2.siddhi.core.event.in.InStateEvent;
 import org.wso2.siddhi.core.snapshot.SnapshotObject;
 import org.wso2.siddhi.core.persistence.PersistenceStore;
@@ -183,11 +184,11 @@ public class PatternInnerHandlerProcessor
 
     protected boolean isEventsWithin(StreamEvent incomingEvent, StateEvent currentEvent) {
         if (log.isDebugEnabled()) {
-            LogHelper.debugLogMessage(log, incomingEvent, "time difference for Pattern events " + (incomingEvent.getTimeStamp() - currentEvent.getFirstEventTimeStamp()));
+            LogHelper.debugLogMessage(log, incomingEvent, "time difference for Pattern events " + (Long.parseLong(((InEvent) incomingEvent).getData()[1].toString()) - currentEvent.getFirstEventTimeStamp()));
         }
         if (within == -1 || currentEvent.getFirstEventTimeStamp() == 0) {
             return true;
-        } else if ((incomingEvent.getTimeStamp() - currentEvent.getFirstEventTimeStamp()) <= within) {
+        } else if (( Long.parseLong(((InEvent) incomingEvent).getData()[1].toString()) - currentEvent.getFirstEventTimeStamp()) <= within) {
             return true;
         } else {
             return false;
