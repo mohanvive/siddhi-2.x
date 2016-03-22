@@ -104,4 +104,27 @@ public abstract class Event implements StreamEvent, AtomicEvent {
     public Object getData9() {
         return data[9];
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event)) return false;
+
+        Event event = (Event) o;
+
+        if (timeStamp != event.timeStamp) return false;
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        if (!Arrays.equals(data, event.data)) return false;
+        if (!streamId.equals(event.streamId)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = streamId.hashCode();
+        result = 31 * result + (int) (timeStamp ^ (timeStamp >>> 32));
+        result = 31 * result + (data != null ? Arrays.hashCode(data) : 0);
+        return result;
+    }
 }

@@ -1,3 +1,21 @@
+/*
+*  Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+*
+*  WSO2 Inc. licenses this file to you under the Apache License,
+*  Version 2.0 (the "License"); you may not use this file except
+*  in compliance with the License.
+*  You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing,
+* software distributed under the License is distributed on an
+* "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+* KIND, either express or implied.  See the License for the
+* specific language governing permissions and limitations
+* under the License.
+*/
+
 package org.wso2.siddhi.test.standard;
 
 import org.apache.log4j.Logger;
@@ -8,49 +26,7 @@ import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
 
-/**
- * Created with IntelliJ IDEA.
- * User: mohan
- * Date: 3/6/16
- * Time: 6:16 PM
- * To change this template use File | Settings | File Templates.
- */
 public class KslackTestClass {
-
-//    public static void main(String[] args) {
-//
-////        SiddhiQueue<InEvent> currentProcessedEventQueue = new SiddhiQueue<InEvent>();
-////        currentProcessedEventQueue.put(new InEvent("fdfd",232323l , new Object[]{"ds"}));
-////        SiddhiQueue<InEvent> nextQueue = currentProcessedEventQueue;
-////        currentProcessedEventQueue = new SiddhiQueue<InEvent>();
-////
-////        System.out.println(currentProcessedEventQueue.size());
-////        System.out.println(nextQueue.size());
-//
-//
-////        HashSet<String> al = new HashSet<String>();
-////        al.add("Ravi");
-////        al.add("Vijay");
-////        al.add("Ravi");
-////        al.add("Ajay");
-////
-////        System.out.println(al.size());
-////
-////        HashSet<Event> al = new HashSet<Event>();
-////        al.add(new InEvent("id",67677, new Object[]{"ii","22"}));
-////        al.add(new InEvent("id",67677, new Object[]{"ii","22"}));
-////
-////        System.out.println(al.size());
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//    }
 
     static final Logger log = Logger.getLogger(KslackTestClass.class);
     private int count;
