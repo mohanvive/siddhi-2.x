@@ -95,7 +95,7 @@ public class KslackWindowProcessor extends WindowProcessor {
 
         List<InEvent> newEventList = new ArrayList<InEvent>();
         try {
-            long timestamp = (Long) event.getData(timeStampAttributePosition);
+            long timestamp = (Long) event.getTimeStamp();
             if (expireFlag) {
                 if (timestamp < lastSentTimeStamp) {
                     return;
@@ -191,8 +191,8 @@ public class KslackWindowProcessor extends WindowProcessor {
             timeStampAttributePosition = definition.getAttributePosition(timeStampAttributeName);
             //In the following case we have the timer operating in background. But we do not impose a K-slack window length.
         } else if (parameters.length == 2) {
-            timeStampAttributeName = ((Variable) parameters[0]).getAttributeName();
-            timeStampAttributePosition = definition.getAttributePosition(timeStampAttributeName);
+//            timeStampAttributeName = ((Variable) parameters[0]).getAttributeName();
+//            timeStampAttributePosition = definition.getAttributePosition(timeStampAttributeName);
             TIMER_DURATION = ((IntConstant) parameters[1]).getValue();
             //In the third case we have both the timer operating in the background and we have also specified a K-slack window length.
         }

@@ -33,7 +33,7 @@ public class Usecase1Runner {
         AddQueries.addHitStream(siddhiManager);
 
         String patternQuery = "from every ( h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
-                " within 10 seconds\n" +
+                " within 6 seconds\n" +
                 " select h1.pid as player1, h2.pid as player2\n" +
                 " insert into patternMatchedStream;";
 

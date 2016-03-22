@@ -25,6 +25,7 @@ import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.event.Event;
 import org.wso2.siddhi.core.query.output.callback.QueryCallback;
 import org.wso2.siddhi.core.stream.input.InputHandler;
+import org.wso2.siddhi.core.util.EventPrinter;
 
 public class KslackTestClass {
 
@@ -34,6 +35,7 @@ public class KslackTestClass {
     private boolean eventArrived;
     long startingTime = 0;
     long endingTime = 0;
+    InputHandler secondHandler;
 
     @Before
     public void init() {
@@ -52,8 +54,10 @@ public class KslackTestClass {
 
         siddhiManager.defineStream("define stream inputStream (eventtt long, price long, volume long); ");
 
-        String queryReference = siddhiManager.addQuery("from inputStream#window.kslack(eventtt) select eventtt, price, volume " +
+        String queryReference = siddhiManager.addQuery("from inputStream#window.kslack(eventtt , 5000) select eventtt, price, volume " +
                 " insert into outputStream; ");
+
+        //secondHandler = sendEvent();
 
         siddhiManager.addCallback(queryReference, new QueryCallback() {
             @Override
@@ -100,6 +104,12 @@ public class KslackTestClass {
                     if (count == 10) {
                         org.junit.Assert.assertEquals(13l, event.getData()[0]);
                     }
+
+//                    try {
+//                        secondHandler.send(event);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                    }
                 }
             }
         });
@@ -117,9 +127,31 @@ public class KslackTestClass {
         inputHandler.send(new Object[]{10l, 60.5f, 200l});
         inputHandler.send(new Object[]{13l, 60.5f, 200l});
 
-        Thread.sleep(2000);
+        Thread.sleep(7000);
         org.junit.Assert.assertEquals("Event count", 9, count);
         siddhiManager.shutdown();
+    }
+
+
+    private InputHandler sendEvent(){
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+
+        siddhiManager.defineStream("define stream inputStream (eventtt long, price long, volume long); ");
+
+        String queryReference = siddhiManager.addQuery("from inputStream select eventtt, price, volume " +
+                " insert into outputStream; ");
+
+        siddhiManager.addCallback(queryReference, new QueryCallback() {
+            @Override
+            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                EventPrinter.print(inEvents);
+            }
+        });
+
+        InputHandler inputHandler = siddhiManager.getInputHandler("inputStream");
+        return inputHandler;
+
     }
 
 

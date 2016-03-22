@@ -1,8 +1,11 @@
 package org.wso2.siddhi.wrapper;
 
 
+import org.wso2.siddhi.core.SiddhiManager;
 import org.wso2.siddhi.core.config.SiddhiConfiguration;
 import org.wso2.siddhi.core.event.Event;
+import org.wso2.siddhi.core.query.output.callback.QueryCallback;
+import org.wso2.siddhi.core.stream.input.InputHandler;
 import org.wso2.siddhi.core.util.EventPrinter;
 import org.wso2.siddhi.wrapper.extensions.NearCheckExecuter;
 import org.wso2.siddhi.wrapper.util.SiddhiEventConsumer;
@@ -15,9 +18,12 @@ import java.util.List;
 
 public class Usecase2Runner {
 
+    static InputHandler reorderEventInputHandler;
+
     public static void main(String[] args) {
 
-        int siddhiCount = Integer.parseInt(args[0]);
+        //int siddhiCount = Integer.parseInt(args[0]);
+        int siddhiCount = 2;
 
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
@@ -27,11 +33,12 @@ public class Usecase2Runner {
         String streamDef[] = new String[]{"define stream sensorStream ( sid string, ts long, " + "x double, y double,  z double, "
                 + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )"};
 
-        String patternQuery = "from every  (h1 = hitStream -> h2 = hitStream[h1.pid != pid]) -> h3 = hitStream[h1.pid == pid] \n" +
-                " within 10 seconds\n" +
+        String patternQuery = "from every ( h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
+                " within 6 seconds\n" +
                 " select h1.pid as player1, h2.pid as player2\n" +
                 " insert into patternMatchedStream;";
 
+        handleDuplicateAndReorder();
 
         SiddhiWrapper siddhiWrapper = new SiddhiWrapper();
         siddhiWrapper.createExecutionPlan(streamDef, patternQuery, siddhiConfiguration, siddhiCount);
@@ -39,17 +46,25 @@ public class Usecase2Runner {
             @Override
             public void receiveEvents(long timeStamp, Event[] inEvents, Event[] removeEvents) {
                 //EventPrinter.print(timeStamp, inEvents, removeEvents);
+                try {
+                    for(Event event : inEvents){
+                        reorderEventInputHandler.send(event.getData());
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("Error while sending events for reordring " + e);
+                }
+
             }
         });
 
 
         try {
-            sendEvents("/home/cep/pattern-perf-test/full-game", siddhiWrapper);
+            sendEvents("/myfiles/debbs/full-game", siddhiWrapper);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
             System.out.println(e);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
         }
 
@@ -79,7 +94,7 @@ public class Usecase2Runner {
 
 
                 if ((time >= 10753295594424116l && time <= 12557295594424116l) || (time >= 13086639146403495l && time <= 14879639146403495l)) {
-                    Object[] data = new Object[]{dataStr[0], time/1000000000 , Double.valueOf(dataStr[2]),
+                    Object[] data = new Object[]{dataStr[0], time / 1000000000, Double.valueOf(dataStr[2]),
                             Double.valueOf(dataStr[3]), Double.valueOf(dataStr[4]), v_kmh,
                             a_ms, Integer.valueOf(dataStr[7]), Integer.valueOf(dataStr[8]),
                             Integer.valueOf(dataStr[9]), Integer.valueOf(dataStr[10]), Integer.valueOf(dataStr[11]), Integer.valueOf(dataStr[12]),
@@ -105,6 +120,26 @@ public class Usecase2Runner {
         }
 
         System.out.println("Queue size " + siddhiWrapper.siddhiBlockingQueueGroup.size());
+    }
+
+
+    private static void handleDuplicateAndReorder() {
+
+        SiddhiManager siddhiManager = new SiddhiManager();
+
+        siddhiManager.defineStream("define stream patternMatchedStream (player1 string, player2 string); ");
+        String queryReference = siddhiManager.addQuery("from patternMatchedStream#window.kslack(100, 5000) select *  " +
+                " insert into filteredOutputStream; ");
+
+        siddhiManager.addCallback(queryReference, new QueryCallback() {
+            @Override
+            public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
+                EventPrinter.print(inEvents);
+            }
+        });
+
+        reorderEventInputHandler = siddhiManager.getInputHandler("patternMatchedStream");
+
     }
 
 
