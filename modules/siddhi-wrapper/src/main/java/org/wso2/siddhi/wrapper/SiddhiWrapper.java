@@ -47,7 +47,7 @@ public class SiddhiWrapper {
     private Logger log = Logger.getLogger(SiddhiWrapper.class);
     private long lastEventTimeStamp;
     private long middleEventTimeStamp;
-    private long withinTimeInterval = 6000;
+    private long withinTimeInterval = 10000;
     private AtomicInteger runningSiddhiManagerCount = new AtomicInteger(0);
     private int maxSiddhiManagerCount = 2;
     private int siddhiManagerCount = 0;
@@ -114,7 +114,7 @@ public class SiddhiWrapper {
         long currentTimeInMillis = System.currentTimeMillis();
 
         if (currentProcessedEventQueue.size() == 0) {
-            lastEventTimeStamp = currentTimeInMillis + withinTimeInterval + 6000;
+            lastEventTimeStamp = currentTimeInMillis + withinTimeInterval + 10000;
             middleEventTimeStamp = currentTimeInMillis + withinTimeInterval;
             currentProcessedEventQueue = nextProcessedEventQueue;
             nextProcessedEventQueue = new SiddhiQueue<InEvent>();

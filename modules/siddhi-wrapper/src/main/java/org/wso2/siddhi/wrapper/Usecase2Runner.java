@@ -34,32 +34,32 @@ public class Usecase2Runner {
                 + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )"};
 
         String patternQuery = "from every ( h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
-                " within 6 seconds\n" +
+                " within 10 seconds\n" +
                 " select h1.pid as player1, h2.pid as player2\n" +
                 " insert into patternMatchedStream;";
 
-        handleDuplicateAndReorder();
+        //handleDuplicateAndReorder();
 
         SiddhiWrapper siddhiWrapper = new SiddhiWrapper();
         siddhiWrapper.createExecutionPlan(streamDef, patternQuery, siddhiConfiguration, siddhiCount);
         siddhiWrapper.registerCallback(new SiddhiEventConsumer() {
             @Override
             public void receiveEvents(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                //EventPrinter.print(timeStamp, inEvents, removeEvents);
-                try {
-                    for(Event event : inEvents){
-                        reorderEventInputHandler.send(event.getData());
-                    }
-                } catch (InterruptedException e) {
-                    System.out.println("Error while sending events for reordring " + e);
-                }
+                EventPrinter.print(timeStamp, inEvents, removeEvents);
+//                try {
+//                    for(Event event : inEvents){
+//                        reorderEventInputHandler.send(event.getData());
+//                    }
+//                } catch (InterruptedException e) {
+//                    System.out.println("Error while sending events for reordring " + e);
+//                }
 
             }
         });
 
 
         try {
-            sendEvents("/myfiles/debbs/full-game", siddhiWrapper);
+            sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
