@@ -22,8 +22,8 @@ public class Usecase2Runner {
 
     public static void main(String[] args) {
 
-        //int siddhiCount = Integer.parseInt(args[0]);
-        int siddhiCount = 2;
+        int siddhiCount = Integer.parseInt(args[0]);
+//        int siddhiCount = 2;
 
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
@@ -34,8 +34,8 @@ public class Usecase2Runner {
                 + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )"};
 
         String patternQuery = "from every ( h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
-                " within 10 seconds\n" +
-                " select h1.pid as player1, h2.pid as player2\n" +
+                " within 5 seconds\n" +
+                " select h1.pid as player1, h2.pid as player2, h1.tsr as tStamp\n" +
                 " insert into patternMatchedStream;";
 
         //handleDuplicateAndReorder();
@@ -45,7 +45,7 @@ public class Usecase2Runner {
         siddhiWrapper.registerCallback(new SiddhiEventConsumer() {
             @Override
             public void receiveEvents(long timeStamp, Event[] inEvents, Event[] removeEvents) {
-                EventPrinter.print(timeStamp, inEvents, removeEvents);
+//                EventPrinter.print(timeStamp, inEvents, removeEvents);
 //                try {
 //                    for(Event event : inEvents){
 //                        reorderEventInputHandler.send(event.getData());
@@ -59,7 +59,7 @@ public class Usecase2Runner {
 
 
         try {
-            sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
+            sendEvents("/home/cep/pattern-perf-test/full-game", siddhiWrapper);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {

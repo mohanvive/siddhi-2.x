@@ -139,7 +139,7 @@ public class AddQueries {
             //calculate ballNearPlayerStream
             String q23 = "from  ballInStream#window.length(1) as b join sensorIdentifiedStream#window.length(1)  as p unidirectional " +
                          "on debs:getDistance(b.x,b.y,b.z, p.x, p.y, p.z) < 1000 and b.a > 55 " +
-                         "select p.sid, p.ts, p.x, p.y, p.z, p.v, p.vx ,p.vy, p.vz, p.a, p.ax, p.ay, p.az, p.pid,p.tid, b.sid as ball_sid  " +
+                         "select p.sid, p.ts, p.x, p.y, p.z, p.v, p.vx ,p.vy, p.vz, p.a, p.ax, p.ay, p.az, p.pid,p.tid, b.sid as ball_sid, b.tsr  " +
                          "insert into hitStream;";
             siddhiManager.addQuery(q23);
 
