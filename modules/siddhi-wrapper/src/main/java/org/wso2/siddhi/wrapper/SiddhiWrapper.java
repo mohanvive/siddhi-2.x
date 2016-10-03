@@ -41,13 +41,13 @@ public class SiddhiWrapper {
     private SiddhiConfiguration siddhiConfiguration;
     private Map<String, SiddhiManager> dynamicSiddhiManagerImpl = new LinkedHashMap<String, SiddhiManager>();
     private List<SiddhiEventConsumer> siddhiEventConsumerList = new ArrayList<SiddhiEventConsumer>();
-    public SiddhiBlockingQueue<SiddhiQueue<InEvent>> siddhiBlockingQueueGroup = new SiddhiBlockingQueue<SiddhiQueue<InEvent>>(600);
+    public SiddhiBlockingQueue<SiddhiQueue<InEvent>> siddhiBlockingQueueGroup = new SiddhiBlockingQueue<SiddhiQueue<InEvent>>(60000);
     private SiddhiQueue<InEvent> currentProcessedEventQueue = new SiddhiQueue<InEvent>();
     private SiddhiQueue<InEvent> nextProcessedEventQueue = new SiddhiQueue<InEvent>();
     private Logger log = Logger.getLogger(SiddhiWrapper.class);
     private long lastEventTimeStamp;
     private long middleEventTimeStamp;
-    private long withinTimeInterval = 5000;
+    private long withinTimeInterval = 6000;
     private AtomicInteger runningSiddhiManagerCount = new AtomicInteger(0);
     private int maxSiddhiManagerCount = 2;
     private int siddhiManagerCount = 0;
@@ -68,6 +68,7 @@ public class SiddhiWrapper {
         this.maxSiddhiManagerCount = maxSiddhiManagerCount;
         siddhiManagerCount++;
         spinSiddhiManagerInstance();
+        siddhiWrapper = this;
     }
 
     public void registerCallback(SiddhiEventConsumer siddhiEventConsumer) {
@@ -109,12 +110,12 @@ public class SiddhiWrapper {
         }
     }
 
-    public void sentEvents(String streamId, Object[] event) {
+    public void sentEvents(String streamId, Object[] event, long time) {
 
-        long currentTimeInMillis = System.currentTimeMillis();
+        long currentTimeInMillis = time;
 
         if (currentProcessedEventQueue.size() == 0) {
-            lastEventTimeStamp = currentTimeInMillis + withinTimeInterval + 5000;
+            lastEventTimeStamp = currentTimeInMillis + withinTimeInterval + 6000;
             middleEventTimeStamp = currentTimeInMillis + withinTimeInterval;
             currentProcessedEventQueue = nextProcessedEventQueue;
             nextProcessedEventQueue = new SiddhiQueue<InEvent>();
@@ -129,12 +130,11 @@ public class SiddhiWrapper {
             nextProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
         } else if (currentTimeInMillis > lastEventTimeStamp) {
             //timer.cancel();
-            System.out.println(currentProcessedEventQueue.size());
             currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
             nextProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
             while (runningSiddhiManagerCount.get() == maxSiddhiManagerCount) {
                 try {
-                    siddhiWrapper = this;
+
                     synchronized (this) {
                         wait();
                     }
@@ -193,6 +193,7 @@ public class SiddhiWrapper {
         @Override
         public void run() {
             while (true) {
+                try{
                 SiddhiQueue<InEvent> siddhiQueue = siddhiBlockingQueueGroup.poll();
                 if (siddhiQueue != null) {
                     runningSiddhiManagerCount.incrementAndGet();
@@ -224,7 +225,9 @@ public class SiddhiWrapper {
                         }
                     }
 
-
+                }
+                }catch (NullPointerException e){
+                    System.out.println("NPE");
                 }
 
             }

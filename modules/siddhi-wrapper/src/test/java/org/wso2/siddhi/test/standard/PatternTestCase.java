@@ -66,14 +66,14 @@ public class PatternTestCase {
             }
         });
 
-        siddhiWrapper.sentEvents("Stream1", new Object[]{"WSO2", 55.6f, 100});
-        Thread.sleep(2100);
-        siddhiWrapper.sentEvents("Stream1", new Object[]{"GOOG", 54f, 100});
-        //Thread.sleep(500);
-        siddhiWrapper.sentEvents("Stream2", new Object[]{"IBM", 55.7f, 100});
-        Thread.sleep(500);
-        siddhiWrapper.sentEvents("Stream1", new Object[]{"IBM2", 55.7f, 100});
-        Thread.sleep(5000);
+//        siddhiWrapper.sentEvents("Stream1", new Object[]{"WSO2", 55.6f, 100});
+//        Thread.sleep(2100);
+//        siddhiWrapper.sentEvents("Stream1", new Object[]{"GOOG", 54f, 100});
+//        //Thread.sleep(500);
+//        siddhiWrapper.sentEvents("Stream2", new Object[]{"IBM", 55.7f, 100});
+//        Thread.sleep(500);
+//        siddhiWrapper.sentEvents("Stream1", new Object[]{"IBM2", 55.7f, 100});
+//        Thread.sleep(5000);
 
         siddhiWrapper.shutdown();
 

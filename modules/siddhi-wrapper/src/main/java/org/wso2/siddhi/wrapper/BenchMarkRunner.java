@@ -26,16 +26,17 @@ public class BenchMarkRunner {
                 double a_ms = Double.valueOf(dataStr[6]) / 1000000;
 
                 long time = Long.valueOf(dataStr[1]);
+                long timeInMillis = time/1000000000;
 
 
                 if ((time >= 10753295594424116l && time <= 12557295594424116l) || (time >= 13086639146403495l && time <= 14879639146403495l)) {
-                    Object[] data = new Object[]{dataStr[0], time/1000000000 , Double.valueOf(dataStr[2]),
+                    Object[] data = new Object[]{dataStr[0], timeInMillis , Double.valueOf(dataStr[2]),
                             Double.valueOf(dataStr[3]), Double.valueOf(dataStr[4]), v_kmh,
                             a_ms, Integer.valueOf(dataStr[7]), Integer.valueOf(dataStr[8]),
                             Integer.valueOf(dataStr[9]), Integer.valueOf(dataStr[10]), Integer.valueOf(dataStr[11]), Integer.valueOf(dataStr[12]),
                             System.nanoTime(), ((Double) (time * Math.pow(10, -9))).longValue()};
 
-                    inputHandler.send(data);
+                    inputHandler.send(timeInMillis, data);
                     count++;
 
                     if (count % 1000000 == 0) {

@@ -13,7 +13,7 @@ public class SiddhiBlockingQueue<T> implements ISiddhiQueue<T> {
     private int count = 0;
 
     public SiddhiBlockingQueue(int size) {
-        queue = new LinkedBlockingQueue<T>(size);
+        queue = new LinkedBlockingQueue<T>();
 
     }
 
