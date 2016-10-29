@@ -23,6 +23,7 @@ import org.wso2.siddhi.core.event.AtomicEvent;
 import org.wso2.siddhi.core.event.ListEvent;
 import org.wso2.siddhi.core.event.StateEvent;
 import org.wso2.siddhi.core.event.StreamEvent;
+import org.wso2.siddhi.core.event.in.InEvent;
 import org.wso2.siddhi.core.event.in.InStateEvent;
 import org.wso2.siddhi.core.snapshot.SnapshotObject;
 import org.wso2.siddhi.core.snapshot.Snapshotable;
@@ -189,7 +190,7 @@ public class SequenceInnerHandlerProcessor
         }
         if (within == -1 || currentEvent.getFirstEventTimeStamp() == 0) {
             return true;
-        } else if ((incomingEvent.getTimeStamp() - currentEvent.getFirstEventTimeStamp()) <= within) {
+        } else if (( Long.parseLong(((InEvent) incomingEvent).getData()[1].toString()) - currentEvent.getFirstEventTimeStamp()) <= within) {
             return true;
         } else {
             return false;

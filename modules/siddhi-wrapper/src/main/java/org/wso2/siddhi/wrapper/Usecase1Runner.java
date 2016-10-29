@@ -25,17 +25,18 @@ public class Usecase1Runner {
         SiddhiManager siddhiManager = new SiddhiManager(configuration);
 
         String streamDef = "define stream sensorStream ( sid string, ts long, " + "x double, y double,  z double, "
-                + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )";
+                           + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )";
 
         InputHandler sensorStreamInputHandler = siddhiManager.defineStream(streamDef);
         AddQueries.addPlayerStreams(siddhiManager);
         AddQueries.addBallStream(siddhiManager);
         AddQueries.addHitStream(siddhiManager);
 
-        String patternQuery = "from every ( h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
-                              " within 6 seconds\n" +
-                              " select h1.pid as player1, h2.pid as player2\n" +
+        String patternQuery = "from  h1 = hitStream , h2 = hitStream[h1.pid != pid] , h3 = hitStream[h1.pid == pid] , h4 = hitStream[h2.pid == pid] \n" +
+                              " within 2 seconds\n" +
+                              " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2, h4.ts as tStamp3\n" +
                               " insert into patternMatchedStream;";
+
 
         String queryReference = siddhiManager.addQuery(patternQuery);
         siddhiManager.addCallback(queryReference, new QueryCallback() {
@@ -49,7 +50,7 @@ public class Usecase1Runner {
         try {
             BenchMarkRunner.sendEvents("/home/mohan/myfiles/debbs/full-game", sensorStreamInputHandler);
         } catch (IOException e) {
-            System.out.println("Exception when reading the event file : " +e);
+            System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
             System.out.println(e);
         }

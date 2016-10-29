@@ -22,8 +22,8 @@ public class Usecase2Runner {
 
     public static void main(String[] args) {
 
-     int siddhiCount = Integer.parseInt(args[0]);
-     //int siddhiCount = 5;
+        int siddhiCount = Integer.parseInt(args[0]);
+        //int siddhiCount = 5;
 
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
@@ -31,12 +31,13 @@ public class Usecase2Runner {
         siddhiConfiguration.setSiddhiExtensions(siddhiExtensions);
 
         String streamDef[] = new String[]{"define stream sensorStream ( sid string, ts long, " + "x double, y double,  z double, "
-                + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )"};
+                                          + "v double, a double, vx double, vy double, vz double, ax double, ay double, az double, tsr long, tsms long )"};
 
-        String patternQuery = "from every (h1 = hitStream -> h2 = hitStream[h1.pid != pid] ) -> h3 = hitStream[h1.pid == pid] \n" +
-                " within 6 seconds\n" +
-                " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2\n" +
-                " insert into patternMatchedStream;";
+
+        String patternQuery = "from  h1 = hitStream , h2 = hitStream[h1.pid != pid] , h3 = hitStream[h1.pid == pid] , h4 = hitStream[h2.pid == pid] \n" +
+                              " within 2 seconds\n" +
+                              " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2, h4.ts as tStamp3\n" +
+                              " insert into patternMatchedStream;";
 
         //handleDuplicateAndReorder();
 
@@ -74,8 +75,8 @@ public class Usecase2Runner {
 
     }
 
-
-    public static void sendEvents(String filename, SiddhiWrapper siddhiWrapper) throws IOException, InterruptedException {
+    public static void sendEvents(String filename, SiddhiWrapper siddhiWrapper)
+            throws IOException, InterruptedException {
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(filename), 10 * 1024 * 1024);
@@ -92,15 +93,15 @@ public class Usecase2Runner {
                 double a_ms = Double.valueOf(dataStr[6]) / 1000000;
 
                 long time = Long.valueOf(dataStr[1]);
-                long timeInMillis = time/1000000000;
+                long timeInMillis = time / 1000000000;
 
 
                 if ((time >= 10753295594424116l && time <= 12557295594424116l) || (time >= 13086639146403495l && time <= 14879639146403495l)) {
                     Object[] data = new Object[]{dataStr[0], timeInMillis, Double.valueOf(dataStr[2]),
-                            Double.valueOf(dataStr[3]), Double.valueOf(dataStr[4]), v_kmh,
-                            a_ms, Integer.valueOf(dataStr[7]), Integer.valueOf(dataStr[8]),
-                            Integer.valueOf(dataStr[9]), Integer.valueOf(dataStr[10]), Integer.valueOf(dataStr[11]), Integer.valueOf(dataStr[12]),
-                            System.nanoTime(), ((Double) (time * Math.pow(10, -9))).longValue()};
+                                                 Double.valueOf(dataStr[3]), Double.valueOf(dataStr[4]), v_kmh,
+                                                 a_ms, Integer.valueOf(dataStr[7]), Integer.valueOf(dataStr[8]),
+                                                 Integer.valueOf(dataStr[9]), Integer.valueOf(dataStr[10]), Integer.valueOf(dataStr[11]), Integer.valueOf(dataStr[12]),
+                                                 System.nanoTime(), ((Double) (time * Math.pow(10, -9))).longValue()};
 
                     siddhiWrapper.sentEvents("sensorStream", data, timeInMillis);
                     count++;
@@ -124,14 +125,13 @@ public class Usecase2Runner {
         System.out.println("Queue size " + siddhiWrapper.siddhiBlockingQueueGroup.size());
     }
 
-
     private static void handleDuplicateAndReorder() {
 
         SiddhiManager siddhiManager = new SiddhiManager();
 
         siddhiManager.defineStream("define stream patternMatchedStream (player1 string, player2 string); ");
         String queryReference = siddhiManager.addQuery("from patternMatchedStream#window.kslack(100, 10000) select *  " +
-                " insert into filteredOutputStream; ");
+                                                       " insert into filteredOutputStream; ");
 
         siddhiManager.addCallback(queryReference, new QueryCallback() {
             @Override

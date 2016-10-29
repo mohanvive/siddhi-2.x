@@ -9,12 +9,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class SiddhiBlockingQueue<T> implements ISiddhiQueue<T> {
     private BlockingQueue<T> queue;
-    private int size;
-    private int count = 0;
 
-    public SiddhiBlockingQueue(int size) {
+    public SiddhiBlockingQueue() {
         queue = new LinkedBlockingQueue<T>();
-
     }
 
     public synchronized void put(T t) {
