@@ -137,5 +137,14 @@ public class ExternalTimeWindowProcessor extends WindowProcessor {
     public void destroy() {
 
     }
+
+    @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            window = new SiddhiQueueGrid<StreamEvent>(elementId, this.siddhiContext, this.async);
+        } else {
+            window = new SiddhiQueue<StreamEvent>();
+        }
+    }
 }
 

@@ -209,4 +209,22 @@ public class TimeBatchWindowProcessor extends WindowProcessor implements Runnabl
     public void destroy() {
 
     }
+
+    @Override
+    public void reset() {
+        oldEventList = new ArrayList<RemoveEvent>();
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            newEventList = this.siddhiContext.getHazelcastInstance().getList(elementId + "-newEventList");
+        } else {
+            newEventList = new ArrayList<InEvent>();
+        }
+
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            window = new SchedulerSiddhiQueueGrid<StreamEvent>(elementId, this, this.siddhiContext, this.async);
+        } else {
+            window = new SchedulerSiddhiQueue<StreamEvent>(this);
+        }
+        //Ordinary scheduling
+        window.schedule();
+    }
 }

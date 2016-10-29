@@ -27,6 +27,7 @@ import org.wso2.siddhi.core.util.collection.queue.SiddhiQueue;
 import org.wso2.siddhi.wrapper.util.SiddhiEventConsumer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class SiddhiWrapper {
     private SiddhiWrapper siddhiWrapper;
     AtomicLong count = new AtomicLong(0);
     long start = 0;
+    long queueIdentifier = 0;
 
     ///////////////////
     //    private Timer timer;
@@ -125,12 +127,12 @@ public class SiddhiWrapper {
 //            timer.schedule(st, withinTimeInterval);
 
 
-        } else if (currentTimeInMillis > middleEventTimeStamp && currentTimeInMillis < lastEventTimeStamp) {
+        } else if (currentTimeInMillis >= middleEventTimeStamp && currentTimeInMillis <= lastEventTimeStamp) {
             currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
             nextProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
         } else if (currentTimeInMillis > lastEventTimeStamp) {
             //timer.cancel();
-            currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
+            //currentProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
             nextProcessedEventQueue.put(new InEvent(streamId, currentTimeInMillis, event));
             while (runningSiddhiManagerCount.get() == maxSiddhiManagerCount) {
                 try {
@@ -142,6 +144,9 @@ public class SiddhiWrapper {
                     System.out.println(e);
                 }
             }
+
+            queueIdentifier++;
+            currentProcessedEventQueue.setId(queueIdentifier);
 
             siddhiBlockingQueueGroup.put(currentProcessedEventQueue);
             currentProcessedEventQueue = new SiddhiQueue<InEvent>();
@@ -192,13 +197,19 @@ public class SiddhiWrapper {
 
         @Override
         public void run() {
+            long lastId = -1;
             while (true) {
-                try{
-                SiddhiQueue<InEvent> siddhiQueue = siddhiBlockingQueueGroup.poll();
+                SiddhiQueue<InEvent> siddhiQueue = siddhiBlockingQueueGroup.peek();
                 if (siddhiQueue != null) {
+                if(lastId == -1 || (siddhiQueue.getId() != lastId+1) ){
+                siddhiQueue = siddhiBlockingQueueGroup.poll();
+                if (siddhiQueue != null) {
+                    lastId = siddhiQueue.getId();
+
                     runningSiddhiManagerCount.incrementAndGet();
+                    InEvent siddhiEvent = null;
                     while (siddhiQueue.size() > 0) {
-                        InEvent siddhiEvent = siddhiQueue.poll();
+                        siddhiEvent = siddhiQueue.poll();
                         try {
 
                             inputHandler.send(siddhiEvent);
@@ -218,7 +229,9 @@ public class SiddhiWrapper {
                         }
 
                     }
+
                     int activeSiddhiManager = runningSiddhiManagerCount.decrementAndGet();
+                    //resetSiddhiManager();
                     if (activeSiddhiManager < 2) {
                         synchronized (siddhiWrapper) {
                             siddhiWrapper.notifyAll();
@@ -226,12 +239,41 @@ public class SiddhiWrapper {
                     }
 
                 }
-                }catch (NullPointerException e){
-                    System.out.println("NPE");
                 }
 
             }
+            }
         }
+
+//        public void resetSiddhiManager(){
+//
+//            dynamicSiddhiManagerImpl.remove(this.queryReference);
+//
+//            if (siddhiConfiguration != null) {
+//                siddhiManager = new SiddhiManager(siddhiConfiguration);
+//            } else {
+//                siddhiManager = new SiddhiManager();
+//            }
+//
+//            for (String streamDefinition : streamDefinitionArray) {
+//                siddhiManager.defineStream(streamDefinition);
+//            }
+//
+//            //It is only a temporary hack.
+//            ///
+//            ////
+//            AddQueries.addPlayerStreams(siddhiManager);
+//            AddQueries.addBallStream(siddhiManager);
+//            AddQueries.addHitStream(siddhiManager);
+//
+//            String queryReference = siddhiManager.addQuery(siddhiQuery);
+//            dynamicSiddhiManagerImpl.put(queryReference, siddhiManager);
+//            (new Thread(new EventConsumer(siddhiManager, queryReference))).start();
+//            inputHandler = siddhiManager.getInputHandler("sensorStream");
+////            consumerMap.remove(this.queryReference).destroy();
+//            this.queryReference = queryReference;
+//
+//        }
     }
 
 

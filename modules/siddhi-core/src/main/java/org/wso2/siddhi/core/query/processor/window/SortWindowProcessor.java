@@ -201,6 +201,15 @@ public class SortWindowProcessor extends WindowProcessor {
     }
 
     @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            //TODO: Handle isDistributedProcessingEnabled case
+        } else {
+            sortedWindow = new ArrayList<Event>();
+        }
+    }
+
+    @Override
     public void destroy(){
     }
 }

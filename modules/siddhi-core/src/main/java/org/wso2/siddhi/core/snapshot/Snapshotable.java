@@ -24,4 +24,6 @@ public interface Snapshotable extends MarkedElement {
     public SnapshotObject snapshot();
 
     public void restore(SnapshotObject snapshotObject);
+
+    public void reset();
 }

@@ -107,4 +107,13 @@ public class DistributedAggregationAttributeProcessor extends AbstractAggregatio
         distributedAggregatorMap.unlock(elementId);
     }
 
+    @Override
+    public void reset() {
+        distributedAggregatorMap = siddhiContext.getHazelcastInstance().getMap("SimpleDistributedAggregatorMap");
+        distributedAggregatorMap.lock(elementId);
+        outputAttributeAggregator = sampleOutputAttributeAggregator.newInstance();
+        siddhiContext.addEternalReferencedHolder(outputAttributeAggregator);
+        distributedAggregatorMap.putIfAbsent(elementId, outputAttributeAggregator);
+        distributedAggregatorMap.unlock(elementId);
+    }
 }

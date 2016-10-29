@@ -192,4 +192,14 @@ public class LossyFrequentWindowProcessor extends WindowProcessor {
 
     }
 
+    @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            countMap = new SiddhiMapGrid<LossyCount>(elementId, this.siddhiContext);
+            map = new SiddhiMapGrid<StreamEvent>(elementId, this.siddhiContext);
+        } else {
+            countMap = new SiddhiMap<LossyCount>();
+            map = new SiddhiMap<StreamEvent>();
+        }
+    }
 }

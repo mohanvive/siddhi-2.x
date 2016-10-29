@@ -134,4 +134,18 @@ public class LengthBatchWindowProcessor extends WindowProcessor {
 
     }
 
+    @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            window = new SiddhiQueueGrid<StreamEvent>(elementId, this.siddhiContext, this.async);
+        } else {
+            window = new SiddhiQueue<StreamEvent>();
+        }
+        oldEventList = new ArrayList<RemoveEvent>();
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            newEventList = this.siddhiContext.getHazelcastInstance().getList(elementId + "-newEventList");
+        } else {
+            newEventList = new ArrayList<InEvent>();
+        }
+    }
 }

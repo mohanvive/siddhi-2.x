@@ -64,4 +64,8 @@ public class GroupByAttributeAggregatorProcessor extends AbstractAggregationAttr
 
     }
 
+    @Override
+    public void reset() {
+        aggregatorMap = new HashMap<String, OutputAttributeAggregator>();
+    }
 }

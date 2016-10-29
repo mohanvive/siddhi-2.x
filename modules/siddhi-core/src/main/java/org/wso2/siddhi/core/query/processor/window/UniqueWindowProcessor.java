@@ -155,4 +155,13 @@ public class UniqueWindowProcessor extends WindowProcessor {
     public void destroy(){
 
     }
+
+    @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            map = new SiddhiMapGrid<StreamEvent>(elementId, this.siddhiContext);
+        } else {
+            map = new SiddhiMap<StreamEvent>();
+        }
+    }
 }

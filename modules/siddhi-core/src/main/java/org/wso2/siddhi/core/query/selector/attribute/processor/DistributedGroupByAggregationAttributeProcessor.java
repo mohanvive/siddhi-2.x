@@ -124,4 +124,8 @@ public class DistributedGroupByAggregationAttributeProcessor extends AbstractAgg
         }
     }
 
+    @Override
+    public void reset() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

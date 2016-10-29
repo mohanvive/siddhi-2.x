@@ -71,6 +71,7 @@ public class SiddhiManager {
     private ConcurrentMap<String, InputHandler> inputHandlerMap = new ConcurrentHashMap<String, InputHandler>();
     private ConcurrentMap<String, EventTable> eventTableMap = new ConcurrentHashMap<String, EventTable>(); //contains event tables
     private ConcurrentMap<String, PartitionDefinition> partitionDefinitionMap = new ConcurrentHashMap<String, PartitionDefinition>();
+    private QueryManager queryManager;
 
 //    LinkedBlockingQueue<StateEvent> inputQueue = new LinkedBlockingQueue<StateEvent>();
 
@@ -291,7 +292,7 @@ public class SiddhiManager {
 //    }
 
     public String addQuery(Query query) {
-        QueryManager queryManager = new QueryManager(query, streamTableDefinitionMap, streamJunctionMap, eventTableMap, partitionDefinitionMap, siddhiContext);
+        queryManager = new QueryManager(query, streamTableDefinitionMap, streamJunctionMap, eventTableMap, partitionDefinitionMap, siddhiContext);
         OutputCallback outputCallback = queryManager.getOutputCallback();
         if (outputCallback != null && outputCallback instanceof InsertIntoStreamCallback) {
             defineStream(((InsertIntoStreamCallback) outputCallback).getOutputStreamDefinition());
@@ -299,6 +300,10 @@ public class SiddhiManager {
         queryProcessorMap.put(queryManager.getQueryId(), queryManager);
         return queryManager.getQueryId();
 
+    }
+
+    public void reset(){
+        queryManager.reset();
     }
 
     public ExecutionPlanReference addExecutionPlan(String executionPlan) throws SiddhiParserException {

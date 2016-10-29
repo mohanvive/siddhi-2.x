@@ -23,6 +23,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class SiddhiQueue<T> implements ISiddhiQueue<T> {
     private BlockingQueue<T> queue = new LinkedBlockingQueue<T>();
+    private long id;
 
     public synchronized void put(T t) {
         queue.add(t);
@@ -50,5 +51,13 @@ public class SiddhiQueue<T> implements ISiddhiQueue<T> {
 
     public int size() {
         return queue.size();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }

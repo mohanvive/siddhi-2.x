@@ -143,14 +143,4 @@ public class PatternHandlerProcessor
     public List<PatternInnerHandlerProcessor> getPatternInnerHandlerProcessorList() {
         return patternInnerHandlerProcessorList;
     }
-
-    public PatternHandlerProcessor cloneObject(){
-        try {
-            return (PatternHandlerProcessor) super.clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return null;
-    }
 }

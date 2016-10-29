@@ -244,5 +244,24 @@ public class TimeWindowProcessor extends WindowProcessor implements RunnableWind
     public void destroy() {
 
     }
+
+    @Override
+    public void reset() {
+        if (!isConstantSchedulingMode) {
+            if (this.siddhiContext.isDistributedProcessingEnabled()) {
+                window = new SchedulerTimestampSiddhiQueueGrid<StreamEvent>(elementId, this, this.siddhiContext, this.async);
+            } else {
+                window = new SchedulerTimestampSiddhiQueue<StreamEvent>(this);
+            }
+        } else {
+            if (this.siddhiContext.isDistributedProcessingEnabled()) {
+                throw new UnsupportedOperationException("Constant time sliding not supported for distributed processing.");
+                //TODO : Implement constant time sliding window grid for distributed case
+            } else {
+                window = new TimeStampSiddhiQueue<StreamEvent>(constantSchedulingInterval);
+                this.schedule();
+            }
+        }
+    }
 }
 

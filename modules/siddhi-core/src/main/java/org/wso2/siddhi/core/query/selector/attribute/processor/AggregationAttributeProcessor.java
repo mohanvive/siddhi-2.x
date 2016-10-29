@@ -61,4 +61,8 @@ public class AggregationAttributeProcessor extends AbstractAggregationAttributeP
     }
 
 
+    @Override
+    public void reset() {
+        this.outputAttributeAggregator = sampleOutputAttributeAggregator;
+    }
 }

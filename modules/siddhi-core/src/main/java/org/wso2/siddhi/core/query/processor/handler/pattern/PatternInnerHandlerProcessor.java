@@ -66,10 +66,21 @@ public class PatternInnerHandlerProcessor
     protected PatternInnerHandlerProcessor stateInnerHandlerProcessor;
     private long within = -1;
 
+    private PatternState initialState;
+    private FilterProcessor initialFilter;
+
 
     public PatternInnerHandlerProcessor(PatternState state,
                                         FilterProcessor filterProcessor,
                                         int complexEventSize, SiddhiContext siddhiContext, String elementId) {
+        try {
+            initialState = state.clone();
+            initialFilter = filterProcessor.clone();
+        } catch (CloneNotSupportedException e) {
+            System.out.println("Aiyoo");
+            System.out.println(e);
+        }
+
         this.state = state;
         this.elementId = elementId;
         this.nextState = state.getNextState();
@@ -239,6 +250,30 @@ public class PatternInnerHandlerProcessor
     public void restore(SnapshotObject snapshotObject) {
         currentEvents.restoreState((Object[]) snapshotObject.getData()[0]);
         nextEvents.restoreState((Object[]) snapshotObject.getData()[1]);
+    }
+
+    @Override
+    public void reset() {
+        currentEvents.clear();
+        nextEvents.clear();
+        within = -1;
+        this.state = initialState;
+        this.nextState = state.getNextState();
+        this.nextEveryState = state.getNextEveryState();
+        this.distributedProcessing = siddhiContext.isDistributedProcessingEnabled();
+        this.filterProcessor = initialFilter;
+
+        if (state.isFirst()) {
+            //first event
+            if (distributedProcessing) {
+                if (!nextEvents.isInited()) {
+                    addToNextEvents(new InStateEvent(new StreamEvent[complexEventSize], siddhiContext.getGlobalIndexGenerator().getNewIndex()));
+                }
+            } else {
+                addToNextEvents(new InStateEvent(new StreamEvent[complexEventSize]));
+            }
+        }
+
     }
 
     public void setWithin(long within) {

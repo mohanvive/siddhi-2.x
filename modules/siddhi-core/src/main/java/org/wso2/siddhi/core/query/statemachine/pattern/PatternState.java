@@ -21,7 +21,7 @@ import org.wso2.siddhi.core.query.statemachine.State;
 import org.wso2.siddhi.query.api.query.input.BasicStream;
 import org.wso2.siddhi.query.api.query.input.TransformedStream;
 
-public class PatternState implements State {
+public class PatternState implements State, Cloneable {
 
     private TransformedStream transformedStream;
     private int stateNumber;
@@ -83,6 +83,10 @@ public class PatternState implements State {
 
     public void setNextEveryState(PatternState nextEveryState) {
         this.nextEveryState = nextEveryState;
+    }
+
+    public PatternState clone()throws CloneNotSupportedException{
+        return (PatternState) super.clone();
     }
 
 }

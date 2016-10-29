@@ -177,4 +177,14 @@ public class FrequentWindowProcessor extends WindowProcessor {
 
     }
 
+    @Override
+    public void reset() {
+        if (this.siddhiContext.isDistributedProcessingEnabled()) {
+            countMap = new SiddhiMapGrid<Integer>(elementId, this.siddhiContext);
+            map = new SiddhiMapGrid<StreamEvent>(elementId, this.siddhiContext);
+        } else {
+            countMap = new SiddhiMap<Integer>();
+            map = new SiddhiMap<StreamEvent>();
+        }
+    }
 }

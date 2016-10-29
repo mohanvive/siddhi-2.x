@@ -212,6 +212,11 @@ public class KslackWindowProcessor extends WindowProcessor {
 
     }
 
+    @Override
+    public void reset() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     class KSlackTimerTask extends TimerTask {
         private TreeMap<Long, HashSet<InEvent>> expiredEventTreeMap;
         private QueryPostProcessingElement nextProcessor;

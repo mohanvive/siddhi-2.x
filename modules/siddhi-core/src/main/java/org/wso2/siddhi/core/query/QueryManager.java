@@ -30,7 +30,9 @@ import org.wso2.siddhi.core.query.processor.handler.PartitionHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.TableHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.pattern.PatternHandlerProcessor;
 import org.wso2.siddhi.core.query.processor.handler.pattern.PatternHandlerProcessorGroup;
+import org.wso2.siddhi.core.query.processor.handler.pattern.PatternInnerHandlerProcessor;
 import org.wso2.siddhi.core.query.selector.QuerySelector;
+import org.wso2.siddhi.core.snapshot.Snapshotable;
 import org.wso2.siddhi.core.stream.StreamJunction;
 import org.wso2.siddhi.core.table.EventTable;
 import org.wso2.siddhi.core.util.parser.QueryOutputParser;
@@ -106,6 +108,18 @@ public class QueryManager {
             }
         }
         patternHandlerProcessorGroup.setQueryPartition(queryPartitioner);
+    }
+
+    public void reset(){
+        for (HandlerProcessor handlerProcessor : handlerProcessors) {
+            if(handlerProcessor instanceof PatternHandlerProcessor){
+                List<PatternInnerHandlerProcessor> patternInnerHandlerProcessorList = ((PatternHandlerProcessor) handlerProcessor).getPatternInnerHandlerProcessorList();
+                for(PatternInnerHandlerProcessor patternInnerHandlerProcessor : patternInnerHandlerProcessorList){
+                    (patternInnerHandlerProcessor).reset();
+                }
+            }
+        }
+
     }
 
     public String getQueryId() {

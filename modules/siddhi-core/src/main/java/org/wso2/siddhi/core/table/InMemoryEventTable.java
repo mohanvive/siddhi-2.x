@@ -41,12 +41,14 @@ public class InMemoryEventTable implements EventTable, Snapshotable {
     private QueryEventSource queryEventSource;
     private String elementId;
     private final boolean enableRemoveAndAdd;
+    private SiddhiContext siddhiContext;
 
 
     public InMemoryEventTable(TableDefinition tableDefinition, SiddhiContext siddhiContext) {
         elementId = siddhiContext.getElementIdGenerator().createNewId();
         this.tableDefinition = tableDefinition;
         this.queryEventSource = new QueryEventSource(tableDefinition.getTableId(), tableDefinition.getTableId(), tableDefinition, null, null, null);
+        this.siddhiContext = siddhiContext;
         if (siddhiContext.isDistributedProcessingEnabled()) {
             enableRemoveAndAdd = true;
             this.list = new SiddhiListGrid<StreamEvent>(elementId, siddhiContext);
@@ -227,6 +229,15 @@ public class InMemoryEventTable implements EventTable, Snapshotable {
     @Override
     public void restore(SnapshotObject snapshotObject) {
         list.restoreState((Object[]) snapshotObject.getData()[0]);
+    }
+
+    @Override
+    public void reset() {
+        if (siddhiContext.isDistributedProcessingEnabled()) {
+            this.list = new SiddhiListGrid<StreamEvent>(elementId, siddhiContext);
+        } else {
+            this.list = new SiddhiList<StreamEvent>();
+        }
     }
 
     @Override

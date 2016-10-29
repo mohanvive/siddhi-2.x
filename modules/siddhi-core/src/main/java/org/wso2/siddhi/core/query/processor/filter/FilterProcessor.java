@@ -24,7 +24,7 @@ import org.wso2.siddhi.core.event.ListAtomicEvent;
 import org.wso2.siddhi.core.event.ListEvent;
 import org.wso2.siddhi.core.executor.conditon.ConditionExecutor;
 
-public class FilterProcessor {
+public class FilterProcessor implements Cloneable {
     private ConditionExecutor conditionExecutor;
 
     public FilterProcessor(ConditionExecutor conditionExecutor) {
@@ -54,5 +54,9 @@ public class FilterProcessor {
             return resultEvent;
         }
         return null;
+    }
+
+    public FilterProcessor clone()throws CloneNotSupportedException{
+        return (FilterProcessor) super.clone();
     }
 }

@@ -22,8 +22,8 @@ public class Usecase2Runner {
 
     public static void main(String[] args) {
 
-//        int siddhiCount = Integer.parseInt(args[0]);
-      int siddhiCount = 2;
+     int siddhiCount = Integer.parseInt(args[0]);
+     //int siddhiCount = 5;
 
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
@@ -59,7 +59,8 @@ public class Usecase2Runner {
 
 
         try {
-            sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
+            sendEvents("/home/cep/pattern-perf-test/full-game", siddhiWrapper);
+            //sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
@@ -91,16 +92,17 @@ public class Usecase2Runner {
                 double a_ms = Double.valueOf(dataStr[6]) / 1000000;
 
                 long time = Long.valueOf(dataStr[1]);
+                long timeInMillis = time/1000000000;
 
 
                 if ((time >= 10753295594424116l && time <= 12557295594424116l) || (time >= 13086639146403495l && time <= 14879639146403495l)) {
-                    Object[] data = new Object[]{dataStr[0], time / 1000000000, Double.valueOf(dataStr[2]),
+                    Object[] data = new Object[]{dataStr[0], timeInMillis, Double.valueOf(dataStr[2]),
                             Double.valueOf(dataStr[3]), Double.valueOf(dataStr[4]), v_kmh,
                             a_ms, Integer.valueOf(dataStr[7]), Integer.valueOf(dataStr[8]),
                             Integer.valueOf(dataStr[9]), Integer.valueOf(dataStr[10]), Integer.valueOf(dataStr[11]), Integer.valueOf(dataStr[12]),
                             System.nanoTime(), ((Double) (time * Math.pow(10, -9))).longValue()};
 
-                    siddhiWrapper.sentEvents("sensorStream", data, time);
+                    siddhiWrapper.sentEvents("sensorStream", data, timeInMillis);
                     count++;
 
                     if (count % 1000000 == 0) {
