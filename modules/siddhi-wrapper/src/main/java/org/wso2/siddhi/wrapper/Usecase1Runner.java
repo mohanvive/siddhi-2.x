@@ -34,7 +34,7 @@ public class Usecase1Runner {
 
         String patternQuery = "from every h1 = hitStream -> h2 = hitStream[h1.pid != pid and h1.tid == tid] -> h3 = hitStream[h1.pid == pid]  \n" +
                               " within 2 seconds\n" +
-                              " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2 \n" +
+                              " select h1.pid as player1, h2.pid as player2, h3.pid as player3, h1.tsr as tStamp , h2.tsr as tStamp1 , h3.tsr as tStamp2 \n" +
                               " insert into patternMatchedStream;";
 
 
