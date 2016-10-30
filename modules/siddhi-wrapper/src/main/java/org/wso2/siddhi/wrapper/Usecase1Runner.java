@@ -32,9 +32,9 @@ public class Usecase1Runner {
         AddQueries.addBallStream(siddhiManager);
         AddQueries.addHitStream(siddhiManager);
 
-        String patternQuery = "from  h1 = hitStream , h2 = hitStream[h1.pid != pid] , h3 = hitStream[h1.pid == pid] , h4 = hitStream[h2.pid == pid] \n" +
+        String patternQuery = "from every h1 = hitStream -> h2 = hitStream[h1.pid != pid and h1.tid == tid] -> h3 = hitStream[h1.pid == pid]  \n" +
                               " within 2 seconds\n" +
-                              " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2, h4.ts as tStamp3\n" +
+                              " select h1.pid as player1, h2.pid as player2, h1.ts as tStamp , h2.ts as tStamp1 , h3.ts as tStamp2 \n" +
                               " insert into patternMatchedStream;";
 
 
