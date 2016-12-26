@@ -145,27 +145,18 @@ public class SiddhiWrapper {
         SiddhiManager siddhiManager;
         String queryReference;
         InputHandler inputHandler;
-        int uniqueId;
 
         EventPublisher(SiddhiManager siddhiManager, String queryReference) {
             this.siddhiManager = siddhiManager;
             inputHandler = siddhiManager.getInputHandler("sensorStream");
             this.queryReference = queryReference;
-            Random rand = new Random();
-            uniqueId = rand.nextInt(500000) + 1;
         }
 
         @Override
         public void run() {
-            long lastId = -1;
             while (true) {
-                SiddhiQueue<InEvent> siddhiQueue = siddhiBlockingQueueGroup.peek();
-                if (siddhiQueue != null) {
-                    if (lastId == -1 || ((siddhiQueue.getId() != lastId + 1) && (siddhiQueue.getId() != lastId + 2))) {
-                        siddhiQueue = siddhiBlockingQueueGroup.poll();
+                SiddhiQueue<InEvent> siddhiQueue = siddhiBlockingQueueGroup.poll();
                         if (siddhiQueue != null) {
-                            lastId = siddhiQueue.getId();
-
                             siddhiManager.addCallback(queryReference, new QueryCallback() {
                                 @Override
                                 public void receive(long timeStamp, Event[] inEvents, Event[] removeEvents) {
@@ -212,8 +203,7 @@ public class SiddhiWrapper {
                             }
 
                         }
-                    }
-                }
+
             }
         }
     }
