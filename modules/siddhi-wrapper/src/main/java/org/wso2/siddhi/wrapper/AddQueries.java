@@ -12,49 +12,49 @@ public class AddQueries {
         } else {
             String q0A =
                     "from  sensorStream [ sid == '13' or sid == '14' or sid == '97' or sid == '98'] " +
-                    "select 'Nick Gertje' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms  " +
+                    "select 'Nick Gertje' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr  " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q0A);
 
             String q01 =
                     "from  sensorStream [ sid == '47' or sid == '16'] " +
-                    "select 'Dennis Dotterweich' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Dennis Dotterweich' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q01);
 
             String q02 =
                     "from  sensorStream [ sid == '49' or sid == '88'] " +
-                    "select 'Niklas Waelzlein' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Niklas Waelzlein' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q02);
 
             String q03 =
                     "from  sensorStream [ sid == '19' or sid == '52'] " +
-                    "select 'Wili Sommer' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Wili Sommer' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q03);
 
             String q04 =
                     "from  sensorStream [ sid == '53' or sid == '54'] " +
-                    "select 'Philipp Harlass' as pid , 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Philipp Harlass' as pid , 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q04);
 
             String q05 =
                     "from  sensorStream [ sid == '23' or sid == '24'] " +
-                    "select 'Roman Hartleb' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Roman Hartleb' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q05);
 
             String q06 =
                     "from  sensorStream [ sid == '57' or sid == '58'] " +
-                    "select 'Erik Engelhardt' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Erik Engelhardt' as pid, 'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q06);
 
             String q07 =
                     "from  sensorStream [ sid == '59' or sid == '28'] " +
-                    "select 'Sandro Schneider' as pid ,'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Sandro Schneider' as pid ,'A' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q07);
 
@@ -62,49 +62,49 @@ public class AddQueries {
 
             String q0B =
                     "from  sensorStream [ sid == '61' or sid == '62' or sid == '99' or sid == '100'] " +
-                    "select 'Leon Krapf' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Leon Krapf' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q0B);
 
             String q08 =
                     "from  sensorStream [ sid == '63' or sid == '64'] " +
-                    "select 'Kevin Baer' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Kevin Baer' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q08);
 
             String q09 =
                     "from  sensorStream [ sid == '65' or sid == '66'] " +
-                    "select 'Luca Ziegler' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Luca Ziegler' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q09);
 
             String q010 =
                     "from  sensorStream [ sid == '67' or sid == '68'] " +
-                    "select 'Ben Mueller' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Ben Mueller' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q010);
 
             String q011 =
                     "from  sensorStream [ sid == '69' or sid == '38'] " +
-                    "select 'Vale Reitstetter' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Vale Reitstetter' as pid,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q011);
 
             String q012 =
                     "from  sensorStream [ sid == '71' or sid == '40'] " +
-                    "select 'Christopher Lee' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Christopher Lee' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q012);
 
             String q013 =
                     "from  sensorStream [ sid == '73' or sid == '74'] " +
-                    "select 'Leon Heinze' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Leon Heinze' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q013);
 
             String q014 =
                     "from  sensorStream [ sid == '75' or sid == '44'] " +
-                    "select 'Leo Langhans' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms " +
+                    "select 'Leo Langhans' as pid ,'B' as tid, ts, x, y, z, v, a, vx, vy, vz, ax, ay, az, sid, tsms, tsr " +
                     "insert into " + outputStreamName + ";";
             siddhiManager.addQuery(q014);
 
@@ -139,7 +139,7 @@ public class AddQueries {
             //calculate ballNearPlayerStream
             String q23 = "from  ballInStream#window.length(1) as b join sensorIdentifiedStream#window.length(1)  as p unidirectional " +
                          "on debs:getDistance(b.x,b.y,b.z, p.x, p.y, p.z) < 1000 and b.a > 55 " +
-                         "select p.sid, p.ts, p.x, p.y, p.z, p.v, p.vx ,p.vy, p.vz, p.a, p.ax, p.ay, p.az, p.pid,p.tid, b.sid as ball_sid, nanoTime() as tsr  " +
+                         "select p.sid, p.ts, p.x, p.y, p.z, p.v, p.vx ,p.vy, p.vz, p.a, p.ax, p.ay, p.az, p.pid,p.tid, b.sid as ball_sid, p.tsr  " +
                          "insert into hitStream;";
             siddhiManager.addQuery(q23);
 

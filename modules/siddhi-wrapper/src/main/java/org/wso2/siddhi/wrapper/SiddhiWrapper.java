@@ -182,7 +182,7 @@ public class SiddhiWrapper {
 
                                     if (countValue % 1000000 == 0) {
                                         float percentageCompleted = (countValue / 49576080);
-                                        System.out.println("********** Events Completed : " + count + " Throughput : " + (countValue * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
+                                        //System.out.println("********** Events Completed : " + count + " Throughput : " + (countValue * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
                                     }
 
                                 } catch (Exception e) {

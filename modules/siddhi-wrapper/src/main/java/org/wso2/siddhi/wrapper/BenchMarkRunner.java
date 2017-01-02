@@ -41,7 +41,7 @@ public class BenchMarkRunner {
 
                     if (count % 1000000 == 0) {
                         float percentageCompleted = (count / 49576080);
-                        System.out.println("Events Completed : " + count + " Throughput : " + (count * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
+                        //System.out.println("Events Completed : " + count + " Throughput : " + (count * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
                     }
                 }
             }

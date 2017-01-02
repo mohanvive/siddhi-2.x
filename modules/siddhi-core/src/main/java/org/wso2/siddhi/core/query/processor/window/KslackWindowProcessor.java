@@ -95,7 +95,7 @@ public class KslackWindowProcessor extends WindowProcessor {
 
         List<InEvent> newEventList = new ArrayList<InEvent>();
         try {
-            long timestamp = (Long) event.getTimeStamp();
+            long timestamp = event.getTimeStamp();
             if (expireFlag) {
                 if (timestamp < lastSentTimeStamp) {
                     return;

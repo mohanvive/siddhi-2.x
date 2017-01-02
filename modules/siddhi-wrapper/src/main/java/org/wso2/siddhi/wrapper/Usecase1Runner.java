@@ -49,6 +49,7 @@ public class Usecase1Runner {
 
         try {
             BenchMarkRunner.sendEvents("/home/mohan/myfiles/debbs/full-game", sensorStreamInputHandler);
+            //BenchMarkRunner.sendEvents("/home/cep/pattern-perf-test/full-game", sensorStreamInputHandler);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {

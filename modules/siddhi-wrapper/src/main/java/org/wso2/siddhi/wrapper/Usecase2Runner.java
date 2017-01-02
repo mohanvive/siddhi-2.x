@@ -22,8 +22,8 @@ public class Usecase2Runner {
 
     public static void main(String[] args) {
 
-        //int siddhiCount = Integer.parseInt(args[0]);
-        int siddhiCount = 3;
+        int siddhiCount = Integer.parseInt(args[0]);
+//        int siddhiCount = 1;
 
         SiddhiConfiguration siddhiConfiguration = new SiddhiConfiguration();
         List<Class> siddhiExtensions = new ArrayList<Class>();
@@ -36,7 +36,7 @@ public class Usecase2Runner {
 
         String patternQuery = "from every h1 = hitStream -> h2 = hitStream[h1.pid != pid and h1.tid == tid] -> h3 = hitStream[h1.pid == pid]  \n" +
                               " within 2 seconds\n" +
-                              " select h1.pid as player1, h2.pid as player2, h3.pid as player3, h1.tsr as tStamp , h2.tsr as tStamp1 , h3.tsr as tStamp2 \n" +
+                              " select h1.pid as player1, h2.pid as player2, h3.pid as player3, h1.tsr as tStamp , h2.tsr as tStamp1 , h3.ts as tStamp2 \n" +
                               " insert into patternMatchedStream;";
 
         handleDuplicateAndReorder();
@@ -49,7 +49,7 @@ public class Usecase2Runner {
                 //EventPrinter.print(timeStamp, inEvents, removeEvents);
                 try {
                     for (Event event : inEvents) {
-                        reorderEventInputHandler.send(event.getData());
+                        reorderEventInputHandler.send((Long)event.getData5(),event.getData());
                     }
                 } catch (InterruptedException e) {
                     System.out.println("Error while sending events for reordring " + e);
@@ -60,8 +60,8 @@ public class Usecase2Runner {
 
 
         try {
-            //sendEvents("/home/cep/pattern-perf-test/full-game", siddhiWrapper);
-            sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
+            sendEvents("/home/cep/pattern-perf-test/full-game", siddhiWrapper);
+//            sendEvents("/home/mohan/myfiles/debbs/full-game", siddhiWrapper);
         } catch (IOException e) {
             System.out.println("Exception when reading the event file : " + e);
         } catch (InterruptedException e) {
@@ -108,7 +108,7 @@ public class Usecase2Runner {
 
                     if (count % 1000000 == 0) {
                         float percentageCompleted = (count / 49576080);
-                        System.out.println("Events Completed : " + count + " Throughput : " + (count * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
+                        //System.out.println("Events Completed : " + count + " Throughput : " + (count * 1000.0 / (System.currentTimeMillis() - start)) + " PercentageCompleted : " + percentageCompleted + "%");
                     }
                 }
             }
@@ -130,7 +130,7 @@ public class Usecase2Runner {
         SiddhiManager siddhiManager = new SiddhiManager();
 
         siddhiManager.defineStream("define stream patternMatchedStream (player1 string, player2 string, player3 string, tStamp long, tStamp1 long, tStamp2 long); ");
-        String queryReference = siddhiManager.addQuery("from patternMatchedStream#window.kslack(100, 10000) select *  " +
+        String queryReference = siddhiManager.addQuery("from patternMatchedStream#window.kslack(100, 120000) select *  " +
                                                        " insert into filteredOutputStream; ");
 
         siddhiManager.addCallback(queryReference, new QueryCallback() {
